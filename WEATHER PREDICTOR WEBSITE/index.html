@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Forecast</title>
+    <style>
+        /* General styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #00c6ff, #0072ff);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Input field */
+        input {
+            padding: 12px;
+            margin: 10px;
+            width: 250px;
+            font-size: 16px;
+            border: 2px solid #fff;
+            border-radius: 25px;
+            outline: none;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        input::placeholder {
+            color: #eee;
+        }
+
+        /* Buttons */
+        button {
+            padding: 12px 20px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            margin: 10px;
+            border-radius: 25px;
+            transition: 0.3s ease-in-out;
+            color: white;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        button:hover {
+            background: rgba(0, 0, 0, 0.6);
+        }
+
+        /* Weather Table */
+        table {
+            width: 90%;
+            max-width: 800px;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+        }
+
+        th {
+            background: rgba(0, 0, 0, 0.6);
+        }
+
+        /* Table Hover Effect */
+        tbody tr:hover {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            input {
+                width: 200px;
+            }
+            table {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h2>🌤 Weather Forecast 🌎</h2>
+    
+    <input type="text" id="location" placeholder="Enter Location">
+    <br>
+    <button onclick="getWeather()">Get Weather</button>
+    <button onclick="getPrediction()">Get Prediction</button>
+
+    <table id="weatherTable">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Temp (°C)</th>
+                <th>Humidity (%)</th>
+                <th>Rainy?</th>
+                <th>Foggy?</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        async function fetchData(url) {
+            const response = await fetch(url);
+            const data = await response.json();
+            return data;
+        }
+
+        async function getWeather() {
+            const location = document.getElementById("location").value;
+            const url = `http://127.0.0.1:5000/weather?location=${location}`;
+            const data = await fetchData(url);
+            updateTable(data);
+        }
+
+        async function getPrediction() {
+            const location = document.getElementById("location").value;
+            const url = `http://127.0.0.1:5000/predict?location=${location}`;
+            const data = await fetchData(url);
+            updateTable(data);
+        }
+
+        function updateTable(data) {
+            const tableBody = document.querySelector("#weatherTable tbody");
+            tableBody.innerHTML = "";
+            data.forEach(row => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `<td>${row.Date}</td><td>${row["Temperature (°C)"]}</td><td>${row["Relative Humidity (%)"]}</td><td>${row["Rainy Condition"]}</td><td>${row["Foggy Condition"]}</td>`;
+                tableBody.appendChild(tr);
+            });
+        }
+    </script>
+
+</body>
+</html>
